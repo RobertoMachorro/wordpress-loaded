@@ -27,9 +27,9 @@ jobs:
       
       - name: Build Docker image
         run: |
-          docker build -f Dockerfile-fpm -t ghcr.io/robertomachorro/wordpress-loaded:php8.3-fpm-${{ github.run_number }} .
+          docker build -f Dockerfile-fpm -t ghcr.io/robertomachorro/wordpress-loaded:6.9.1-php8.3-fpm-${{ github.run_number }} .
       
       - name: Push Docker image
         if: github.event_name != 'pull_request'
         run: |
-          docker push ghcr.io/robertomachorro/wordpress-loaded:php8.3-fpm-${{ github.run_number }}
+          docker push ghcr.io/robertomachorro/wordpress-loaded:6.9.1-php8.3-fpm-${{ github.run_number }}

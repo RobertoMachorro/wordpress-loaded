@@ -1,5 +1,35 @@
-FROM wordpress:php8.3-fpm
+FROM wordpress:6.9.1-php8.3-fpm
 
-RUN pecl install redis \
-    && docker-php-ext-enable redis
-RUN php -m | grep redis
+# Install OS deps for PHP extensions
+RUN set -eux; \
+  apt-get update; \
+  apt-get install -y --no-install-recommends \
+    libjpeg62-turbo-dev \
+    libpng-dev \
+    libwebp-dev \
+    libfreetype6-dev \
+    libzip-dev \
+    unzip \
+    libicu-dev \
+    libmagickwand-dev \
+    ghostscript \
+  ; \
+  rm -rf /var/lib/apt/lists/*
+
+# Build/enable PHP extensions
+RUN set -eux; \
+  docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp; \
+  docker-php-ext-install -j"$(nproc)" \
+    gd \
+    exif \
+    intl \
+    zip \
+    opcache \
+  ; \
+  pecl install redis imagick; \
+  docker-php-ext-enable redis imagick; \
+  php -m | grep -E 'redis|imagick|gd|intl|zip|exif'
+
+# (Optional but recommended) copy in a hardened php.ini/opcache config
+# If you're already mounting a ConfigMap to /usr/local/etc/php/conf.d/custom.ini you can skip this.
+# COPY custom.ini /usr/local/etc/php/conf.d/custom.ini
