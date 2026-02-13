@@ -1,0 +1,35 @@
+name: Build Docker Image (FPM)
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Log in to GitHub Container Registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Build Docker image
+        run: |
+          docker build -f Dockerfile-fpm -t ghcr.io/robertomachorro/wordpress-loaded:php8.3-fpm-${{ github.run_number }} .
+      
+      - name: Push Docker image
+        if: github.event_name != 'pull_request'
+        run: |
+          docker push ghcr.io/robertomachorro/wordpress-loaded:php8.3-fpm-${{ github.run_number }}
