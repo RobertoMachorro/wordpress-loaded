@@ -1,4 +1,4 @@
-FROM wordpress:6.9.1-php8.3-fpm
+FROM wordpress:6.9.4-php8.3-fpm
 
 # Install OS deps for PHP extensions
 RUN set -eux; \
