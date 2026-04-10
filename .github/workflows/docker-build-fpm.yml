@@ -29,6 +29,12 @@ jobs:
         run: |
           docker build -f Dockerfile-fpm -t ghcr.io/robertomachorro/wordpress-loaded:6.9.4-php8.3-fpm-${{ github.run_number }} .
       
+      - name: Validate wp-cli installation
+        run: |
+          docker run --rm \
+            ghcr.io/robertomachorro/wordpress-loaded:6.9.4-php8.3-fpm-${{ github.run_number }} \
+            wp --info --allow-root
+
       - name: Push Docker image
         if: github.event_name != 'pull_request'
         run: |

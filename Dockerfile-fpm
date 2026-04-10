@@ -30,6 +30,12 @@ RUN set -eux; \
   docker-php-ext-enable redis imagick; \
   php -m | grep -E 'redis|imagick|gd|intl|zip|exif'
 
+# Install wp-cli
+RUN set -eux; \
+  curl -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar; \
+  chmod +x /usr/local/bin/wp; \
+  wp --info --allow-root
+
 # (Optional but recommended) copy in a hardened php.ini/opcache config
 # If you're already mounting a ConfigMap to /usr/local/etc/php/conf.d/custom.ini you can skip this.
 # COPY custom.ini /usr/local/etc/php/conf.d/custom.ini
